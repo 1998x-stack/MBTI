@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personality Zoo - 趣味MBTI测试</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 欢迎页面 -->
+    <div id="welcome-screen" class="screen active">
+        <div class="apple-header">
+            <div class="apple-logo">🍎</div>
+            <div class="header-title">Personality Zoo</div>
+        </div>
+        
+        <div class="hero-section">
+            <h1>你是什么人格动物?</h1>
+            <p>通过12个有趣问题发现你的MBTI类型<br>并获得专属动物形象</p>
+            <img src="assets/images/all-animals.png" alt="动物集合" class="hero-image">
+            <button id="start-btn" class="apple-btn">
+                <i class="fa-solid fa-paw"></i> 开始测试
+            </button>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fa-solid fa-gamepad"></i>
+                <h3>游戏化测试</h3>
+                <p>有趣的场景选择代替枯燥问卷</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-award"></i>
+                <h3>成就徽章</h3>
+                <p>完成挑战解锁独特成就</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-share-nodes"></i>
+                <h3>分享结果</h3>
+                <p>生成专属动物卡片分享好友</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 测试页面 -->
+    <div id="test-screen" class="screen">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="question-progress"></div>
+            </div>
+            <div class="progress-text">问题 <span id="current-q">1</span>/12</div>
+        </div>
+        
+        <div class="question-container">
+            <h2 id="question-text"></h2>
+            <div id="options-container" class="options-grid"></div>
+        </div>
+        
+        <div class="dimension-bars">
+            <div class="dimension">
+                <span>外向(E)</span>
+                <div class="bar-container">
+                    <div class="bar-fill" id="e-bar"></div>
+                </div>
+                <span>内向(I)</span>
+            </div>
+            <div class="dimension">
+                <span>实感(S)</span>
+                <div class="bar-container">
+                    <div class="bar-fill" id="s-bar"></div>
+                </div>
+                <span>直觉(N)</span>
+            </div>
+            <div class="dimension">
+                <span>思维(T)</span>
+                <div class="bar-container">
+                    <div class="bar-fill" id="t-bar"></div>
+                </div>
+                <span>情感(F)</span>
+            </div>
+            <div class="dimension">
+                <span>判断(J)</span>
+                <div class="bar-container">
+                    <div class="bar-fill" id="j-bar"></div>
+                </div>
+                <span>知觉(P)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果页面 -->
+    <div id="result-screen" class="screen">
+        <div class="result-header">
+            <h1>你的测试结果!</h1>
+            <p>你是一只<span id="type-title">霸王龙</span></p>
+        </div>
+        
+        <div class="animal-container">
+            <img id="animal-image" src="" alt="人格动物">
+            <div id="type-acronym" class="type-badge">ENTJ</div>
+        </div>
+        
+        <div class="result-description">
+            <p id="type-description"></p>
+        </div>
+        
+        <div class="achievements-container">
+            <h3><i class="fa-solid fa-trophy"></i> 获得的成就</h3>
+            <div id="badges-container" class="badges-grid"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="retry-btn" class="apple-btn secondary">
+                <i class="fa-solid fa-rotate"></i> 重新测试
+            </button>
+            <button id="share-btn" class="apple-btn">
+                <i class="fa-solid fa-share"></i> 分享结果
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="lib/confetti.js"></script>
+</body>
+</html>
