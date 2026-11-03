@@ -64,6 +64,7 @@ npm run test:e2e
 - Playwright 在 Chromium 桌面和 Pixel 7 模拟设备上验证完整答题、快速连点、回退修改、断点恢复、图鉴、主题与溢出。
 - [V2.1 通过的 GitHub Actions 验证（14/14 浏览器用例）](https://github.com/1998x-stack/MBTI/actions/runs/41564685001)。
 - [V2.1 合并 PR #1](https://github.com/1998x-stack/MBTI/pull/1)。
+- [main 合并后的 GitHub Actions 验证](https://github.com/1998x-stack/MBTI/actions/runs/41564949915)（unit 与浏览器 E2E 均通过）。
 
 ## 分支与版本
 
@@ -73,6 +74,7 @@ npm run test:e2e
 | [develop](https://github.com/1998x-stack/MBTI/tree/develop) | 后续版本的集成开发基线 |
 | [v1](https://github.com/1998x-stack/MBTI/tree/v1) | Personality Zoo 历史快照（保持原实现） |
 | [v2](https://github.com/1998x-stack/MBTI/tree/v2) | PersonaQuest 历史快照（原文件包括不完整的题库草稿） |
+| [v2.1](https://github.com/1998x-stack/MBTI/tree/v2.1) | V2.1 已验收版本快照（保持稳定） |
 | [backup/pre-version-split-2026-11-03](https://github.com/1998x-stack/MBTI/tree/backup/pre-version-split-2026-11-03) | 版本拆分前的完整备份 |
 
 详见 [V2.1 设计与数据契约](docs/V2_1_DESIGN.md)、[仓库审计](docs/REPOSITORY_AUDIT.md) 和 [下一阶段路线图](docs/ROADMAP.md)。
