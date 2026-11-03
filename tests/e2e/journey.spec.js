@@ -32,13 +32,13 @@ test("rapid double click on next never skips the following unanswered question",
 test("answers can be edited after going back and keyboard shortcuts work", async ({ page }) => {
   await page.locator("#start-button").click();
   await page.keyboard.press("4");
-  await expect(page.locator("#quiz-options .option-card").nth(3)).toHaveAttribute("aria-pressed","true");
+  await expect(page.locator("#quiz-options .option-card input").nth(3)).toBeChecked();
   await page.locator("#next-question").click();
   await page.locator("#previous-question").click();
-  await expect(page.locator("#quiz-options .option-card").nth(3)).toHaveAttribute("aria-pressed","true");
+  await expect(page.locator("#quiz-options .option-card input").nth(3)).toBeChecked();
   await page.locator("#quiz-options .option-card").first().click();
-  await expect(page.locator("#quiz-options .option-card").nth(3)).toHaveAttribute("aria-pressed","false");
-  await expect(page.locator("#quiz-options .option-card").first()).toHaveAttribute("aria-pressed","true");
+  await expect(page.locator("#quiz-options .option-card input").nth(3)).not.toBeChecked();
+  await expect(page.locator("#quiz-options .option-card input").first()).toBeChecked();
 });
 
 test("progress restores after refresh and can be cleared without affecting theme", async ({ page }) => {

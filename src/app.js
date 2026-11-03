@@ -123,10 +123,10 @@ function renderAxisTracker() {
 
 function updateOptionSelection() {
   const q = questions[state.index];
-  for (const button of $("quiz-options").querySelectorAll("button[data-option-id]")) {
-    const selected = state.answers[q.id] === button.dataset.optionId;
-    button.setAttribute("aria-pressed", String(selected));
-    button.querySelector(".option-check").textContent = selected ? "✓" : "";
+  for (const input of $("quiz-options").querySelectorAll("input[type=radio]")) {
+    const selected = state.answers[q.id] === input.value;
+    input.checked = selected;
+    input.closest(".option-card").querySelector(".option-check").textContent = selected ? "✓" : "";
   }
   $("next-question").disabled = !state.answers[q.id];
   $("quiz-hint").textContent = state.answers[q.id]
@@ -141,6 +141,10 @@ function chooseOption(id) {
   state.finished = false;
   updateOptionSelection();
   renderAxisTracker();
+  const answered=evaluateAnswers(questions,state.answers).answered;
+  $("quiz-progress").setAttribute("aria-valuenow",String(answered));
+  $("quiz-progress").setAttribute("aria-valuetext","已完成 "+answered+" / "+questions.length+" 题");
+  $("quiz-progress-fill").style.width=(answered/questions.length*100)+"%";
   persistProgress();
 }
 
@@ -152,29 +156,31 @@ function renderQuiz() {
   $("quiz-scenario").textContent = q.scenario;
   $("quiz-prompt").textContent = q.prompt;
   $("quiz-progress").setAttribute("aria-valuemax", String(questions.length));
-  $("quiz-progress").setAttribute("aria-valuenow", String(state.index + 1));
-  $("quiz-progress-fill").style.width = ((state.index + 1) / questions.length * 100) + "%";
-  const optionList = $("quiz-options");
+  const answered=evaluateAnswers(questions,state.answers).answered;
+  $("quiz-progress").setAttribute("aria-valuenow",String(answered));
+  $("quiz-progress").setAttribute("aria-valuetext","已完成 "+answered+" / "+questions.length+" 题");
+  $("quiz-progress-fill").style.width=(answered/questions.length*100)+"%";
+  const optionList=$("quiz-options");
   optionList.replaceChildren();
-  q.options.forEach((option, i) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "option-card";
-    button.dataset.optionId = option.id;
-    button.setAttribute("aria-pressed", "false");
-    const key = document.createElement("span");
-    key.className = "option-index";
-    key.textContent = String(i + 1);
-    key.setAttribute("aria-hidden", "true");
-    const label = document.createElement("span");
-    label.className = "option-label";
-    label.textContent = option.label;
-    const check = document.createElement("span");
-    check.className = "option-check";
-    check.setAttribute("aria-hidden", "true");
-    button.append(key, label, check);
-    button.addEventListener("click", () => chooseOption(option.id));
-    optionList.appendChild(button);
+  const legend=document.createElement("legend");
+  legend.className="sr-only";
+  legend.textContent="选择最接近自己的选项";
+  optionList.appendChild(legend);
+  q.options.forEach((option,i)=>{
+    const label=document.createElement("label");
+    label.className="option-card";
+    const radio=document.createElement("input");
+    radio.type="radio";radio.name="quiz-answer";radio.value=option.id;
+    radio.setAttribute("aria-describedby","quiz-hint");
+    const index=document.createElement("span");
+    index.className="option-index";index.textContent=String(i+1);index.setAttribute("aria-hidden","true");
+    const title=document.createElement("span");
+    title.className="option-label";title.textContent=option.label;
+    const check=document.createElement("span");
+    check.className="option-check";check.setAttribute("aria-hidden","true");
+    label.append(radio,index,title,check);
+    radio.addEventListener("change",()=>chooseOption(option.id));
+    optionList.append(label);
   });
   $("previous-question").disabled = state.index === 0;
   $("next-question").lastChild.textContent = state.index === questions.length - 1 ? " ↗" : " →";
@@ -372,10 +378,15 @@ function init() {
   });
   document.addEventListener("keydown", (event) => {
     if (state.screen !== "quiz" || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+      event.isComposing || event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement ||
+      event.target?.isContentEditable) return;
     if (/^[1-4]$/.test(event.key)) {
       const option = questions[state.index].options[Number(event.key) - 1];
-      if (option) chooseOption(option.id);
+      if (option) {
+        chooseOption(option.id);
+        $("quiz-options").querySelectorAll("input[type=radio]")[Number(event.key)-1]?.focus();
+      }
     }
   });
   setScreen("home", false);

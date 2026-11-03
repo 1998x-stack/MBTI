@@ -34,7 +34,7 @@
         <div class="hero-wrap">
           <div class="hero-copy">
             <span class="eyebrow"><span class="eyebrow-dot"></span> THE LITTLE JOURNEY WITHIN</span>
-            <h1 id="home-heading">你是怎样的<span class="headline-highlight">独特组合<span class="headline-spark" aria-hidden="true">✳</span></span>？</h1>
+            <h1 id="home-heading" tabindex="-1">你是怎样的<span class="headline-highlight">独特组合<span class="headline-spark" aria-hidden="true">✳</span></span>？</h1>
             <p class="hero-lead">每个人都有自己的观察方式、思考节奏和生活偏好。通过 12 个轻松的日常情境，发现属于你的那份可能性。</p>
             <div class="hero-actions">
               <button class="btn btn-primary btn-large" id="start-button" type="button">开始我的探索 <span aria-hidden="true">↗</span></button>
@@ -100,7 +100,7 @@
               <h1 id="quiz-heading" tabindex="-1">加载问题中...</h1>
               <p id="quiz-scenario" class="quiz-scenario"></p>
               <p id="quiz-prompt" class="quiz-prompt"></p>
-              <div id="quiz-options" class="quiz-options" role="group" aria-label="选择最接近自己的选项"></div>
+              <fieldset id="quiz-options" class="quiz-options" aria-labelledby="quiz-prompt"></fieldset>
               <p class="quiz-hint" id="quiz-hint" aria-live="polite">选择最贴近你的那一项。</p>
             </article>
             <div class="quiz-toolbar">
@@ -117,7 +117,7 @@
           <div class="result-copy">
             <span class="eyebrow light-eyebrow"><span class="eyebrow-dot"></span> YOUR LITTLE DISCOVERY</span>
             <p class="result-pretitle">探索完成，认识新的自己</p>
-            <h1 id="results-heading">你的探索画像</h1>
+            <h1 id="results-heading" tabindex="-1">你的探索画像</h1>
             <div class="result-type-line"><strong id="result-code">ENTJ</strong><span id="result-title">独特的你</span></div>
             <p id="result-description" class="result-description"></p>
             <div class="result-actions">
@@ -147,7 +147,7 @@
       </section>
 
       <section class="screen screen-types" id="screen-types" aria-labelledby="types-heading" hidden>
-        <div class="library-intro"><span class="eyebrow"><span class="eyebrow-dot"></span> THE PERSONALITY LIBRARY</span><h1 id="types-heading">16 种画像，<br><span class="headline-highlight">无数种可能。</span></h1><p>这些只是帮助理解偏好的趣味角色。你可以在不同情境中呈现不同面向，无须被任何描述限制。</p><button id="library-start" class="btn btn-primary" type="button">探索我的偏好 <span aria-hidden="true">↗</span></button></div>
+        <div class="library-intro"><span class="eyebrow"><span class="eyebrow-dot"></span> THE PERSONALITY LIBRARY</span><h1 id="types-heading" tabindex="-1">16 种画像，<br><span class="headline-highlight">无数种可能。</span></h1><p>这些只是帮助理解偏好的趣味角色。你可以在不同情境中呈现不同面向，无须被任何描述限制。</p><button id="library-start" class="btn btn-primary" type="button">探索我的偏好 <span aria-hidden="true">↗</span></button></div>
         <div id="types-grid" class="types-grid" aria-label="十六种人格画像"></div>
       </section>
     </main>
