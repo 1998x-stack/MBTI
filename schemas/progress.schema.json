@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "index",
+    "answers",
+    "finished"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 11
+    },
+    "answers": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^q[0-9]{2,3}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^q[0-9]{2,3}-[a-d]$"
+      }
+    },
+    "finished": {
+      "type": "boolean"
+    }
+  }
+}
