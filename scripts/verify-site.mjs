@@ -47,9 +47,13 @@ for (const profile of report.profiles) {
     const output = resolvedWithinDist(variant.path);
     const bytes = await readFile(output);
     const meta = await sharp(bytes).metadata();
+    // Sharp/libvips reports AVIF as HEIF container + AV1 compression.
+    const correctFormat = variant.format === "avif"
+      ? meta.format === "heif" && meta.compression === "av1"
+      : meta.format === variant.format;
     if (bytes.length !== variant.bytes ||
         createHash("sha256").update(bytes).digest("hex") !== variant.sha256 ||
-        meta.format !== variant.format || meta.width !== variant.width) {
+        !correctFormat || meta.width !== variant.width) {
       throw new Error("Invalid encoded image bytes, SHA-256 or dimensions: " + variant.path);
     }
     if (!allReferences.includes(variant.path)) throw new Error("Manifest does not reference: " + variant.path);
