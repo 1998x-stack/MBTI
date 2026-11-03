@@ -93,8 +93,8 @@ main { width: 100%; flex: 1; }
 .hero-visual { position: relative; isolation: isolate; display: grid; place-items: center; min-height: 550px; }
 .hero-visual:before { content:""; position:absolute; inset: 3% 0 0; border-radius: 49% 51% 55% 45%; background: #ece7ff; transform: rotate(-8deg); z-index: -2; }
 .hero-visual:after { content:""; position:absolute; width: 44%; height: 47%; right: -2%; bottom: -4%; border-radius: 50%; background: #e9f3dc; filter: blur(3px); z-index: -3; }
-.hero-visual-orbit { position:absolute; border:1px solid rgba(112,83,194,.24); width: 96%; height: 85%; border-radius: 50%; transform: rotate(23deg); z-index: -1; }
-.orbit-two { width: 70%; height: 97%; transform: rotate(-30deg); }
+.hero-visual-orbit { position:absolute; border:1px solid rgba(112,83,194,.24); width: 76%; height: 62%; border-radius: 50%; transform: rotate(23deg); z-index: -1; }
+.orbit-two { width: 60%; height: 80%; transform: rotate(-30deg); }
 .visual-spark { position:absolute; color:#9b77de; font-size: 35px; }
 .visual-spark-a { top:2%; left:10%; }.visual-spark-b { bottom:5%; right:16%; color:#eda67c; }
 .hero-art-card { background: #fff; border: 7px solid #fff; box-shadow: 0 24px 60px rgba(64, 45, 112, .16); border-radius: 28px; overflow: hidden; width: min(405px,78%); transform: rotate(5deg); }
