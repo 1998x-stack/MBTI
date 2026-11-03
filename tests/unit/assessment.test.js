@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AXES, validateQuestionBank, evaluateAnswers, safeRestoreAnswers } from "../../src/core/assessment.js";
@@ -72,4 +73,33 @@ test("stale, unknown, and invalid persisted answers are discarded", () => {
   assert.equal(restored.q01,"q01-a");
   assert.equal(Object.hasOwn(restored,"q02"),false);
   assert.equal(Object.hasOwn(restored,"rogue"),false);
+});
+
+
+test("a fully completed questionnaire may have a balanced axis (no forced letter)", () => {
+  const make = (id,axis) => {
+    const a = AXES.find(item => item.id === axis);
+    return {id,axis,title:"Example",scenario:"Example",prompt:"Example",options:[
+      {id:id+"-left",letter:a.left,weight:2,label:"Left"},
+      {id:id+"-right",letter:a.right,weight:2,label:"Right"}
+    ]};
+  };
+  const bank = [make("e1","EI"),make("e2","EI"),make("s1","SN"),
+    make("t1","TF"),make("j1","JP")];
+  const answers = {e1:"e1-left",e2:"e2-right",s1:"s1-left",
+    t1:"t1-left",j1:"j1-left"};
+  const result = evaluateAnswers(bank,answers);
+  assert.equal(result.completed,true);
+  assert.equal(result.type,null);
+  assert.equal(result.axes[0].leftScore,result.axes[0].rightScore);
+  assert.equal(result.axes[0].leftPercent,50);
+  assert.equal(result.axes[0].isBalanced,true);
+});
+
+test("every referenced result image is tracked in the repository", () => {
+  for (const profile of Object.values(profiles)) {
+    const path = new URL("../../" + profile.image.replace(/^\.\//,""), import.meta.url);
+    assert.ok(existsSync(path), "Missing image: " + profile.image);
+  }
+  assert.ok(existsSync(new URL("../../assets/images/all-animals_resized.png", import.meta.url)));
 });
