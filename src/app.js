@@ -1,5 +1,8 @@
 import { questions, QUESTION_BANK_VERSION } from "./data/questions.js";
 import { profiles } from "./data/profiles.js";
+import { explainAssessment } from "./core/explanation.js";
+import { setResultArtwork } from "./ui/image-loader.js";
+import { imageManifest } from "./data/image-manifest.js";
 import { AXES, evaluateAnswers, safeRestoreAnswers, validateQuestionBank } from "./core/assessment.js";
 
 const STORAGE_KEY = "personaquest:progress:" + QUESTION_BANK_VERSION;
@@ -122,10 +125,10 @@ function renderAxisTracker() {
 
 function updateOptionSelection() {
   const q = questions[state.index];
-  for (const button of $("quiz-options").querySelectorAll("button[data-option-id]")) {
-    const selected = state.answers[q.id] === button.dataset.optionId;
-    button.setAttribute("aria-pressed", String(selected));
-    button.querySelector(".option-check").textContent = selected ? "✓" : "";
+  for (const input of $("quiz-options").querySelectorAll("input[type=radio]")) {
+    const selected = state.answers[q.id] === input.value;
+    input.checked = selected;
+    input.closest(".option-card").querySelector(".option-check").textContent = selected ? "✓" : "";
   }
   $("next-question").disabled = !state.answers[q.id];
   $("quiz-hint").textContent = state.answers[q.id]
@@ -140,6 +143,10 @@ function chooseOption(id) {
   state.finished = false;
   updateOptionSelection();
   renderAxisTracker();
+  const answered=evaluateAnswers(questions,state.answers).answered;
+  $("quiz-progress").setAttribute("aria-valuenow",String(answered));
+  $("quiz-progress").setAttribute("aria-valuetext","已完成 "+answered+" / "+questions.length+" 题");
+  $("quiz-progress-fill").style.width=(answered/questions.length*100)+"%";
   persistProgress();
 }
 
@@ -151,29 +158,31 @@ function renderQuiz() {
   $("quiz-scenario").textContent = q.scenario;
   $("quiz-prompt").textContent = q.prompt;
   $("quiz-progress").setAttribute("aria-valuemax", String(questions.length));
-  $("quiz-progress").setAttribute("aria-valuenow", String(state.index + 1));
-  $("quiz-progress-fill").style.width = ((state.index + 1) / questions.length * 100) + "%";
-  const optionList = $("quiz-options");
+  const answered=evaluateAnswers(questions,state.answers).answered;
+  $("quiz-progress").setAttribute("aria-valuenow",String(answered));
+  $("quiz-progress").setAttribute("aria-valuetext","已完成 "+answered+" / "+questions.length+" 题");
+  $("quiz-progress-fill").style.width=(answered/questions.length*100)+"%";
+  const optionList=$("quiz-options");
   optionList.replaceChildren();
-  q.options.forEach((option, i) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "option-card";
-    button.dataset.optionId = option.id;
-    button.setAttribute("aria-pressed", "false");
-    const key = document.createElement("span");
-    key.className = "option-index";
-    key.textContent = String(i + 1);
-    key.setAttribute("aria-hidden", "true");
-    const label = document.createElement("span");
-    label.className = "option-label";
-    label.textContent = option.label;
-    const check = document.createElement("span");
-    check.className = "option-check";
-    check.setAttribute("aria-hidden", "true");
-    button.append(key, label, check);
-    button.addEventListener("click", () => chooseOption(option.id));
-    optionList.appendChild(button);
+  const legend=document.createElement("legend");
+  legend.className="sr-only";
+  legend.textContent="选择最接近自己的选项";
+  optionList.appendChild(legend);
+  q.options.forEach((option,i)=>{
+    const label=document.createElement("label");
+    label.className="option-card";
+    const radio=document.createElement("input");
+    radio.type="radio";radio.name="quiz-answer";radio.value=option.id;
+    radio.setAttribute("aria-describedby","quiz-hint");
+    const index=document.createElement("span");
+    index.className="option-index";index.textContent=String(i+1);index.setAttribute("aria-hidden","true");
+    const title=document.createElement("span");
+    title.className="option-label";title.textContent=option.label;
+    const check=document.createElement("span");
+    check.className="option-check";check.setAttribute("aria-hidden","true");
+    label.append(radio,index,title,check);
+    radio.addEventListener("change",()=>chooseOption(option.id));
+    optionList.append(label);
   });
   $("previous-question").disabled = state.index === 0;
   $("next-question").lastChild.textContent = state.index === questions.length - 1 ? " ↗" : " →";
@@ -225,43 +234,54 @@ function appendText(parent, tag, className, text) {
 function renderResults() {
   const result = evaluateAnswers(questions, state.answers);
   if (!result.completed) return;
-  const profile = result.type ? profiles[result.type] : null;
-  $("result-code").textContent = result.type || "MIXED";
-  $("result-title").textContent = profile ? profile.title : "多面探索者";
-  $("result-description").textContent = profile ? profile.description :
-    "你在至少一组偏好上呈现出均衡的选择，因此我们不强行将你归入某一个四字母组合。这样的结果同样值得探索。";
-  const image = $("result-animal");
-  image.src = profile ? profile.image : "./assets/images/all-animals_resized.png";
-  image.alt = profile ? profile.animal + "人格插画" : "十六种人格动物合照";
-  const panel = $("result-axes");
+  const explanation=explainAssessment(questions,state.answers,result);
+  const profile=result.type?profiles[result.type]:null;
+  $("result-code").textContent=result.type||"MIXED";
+  $("result-title").textContent=profile?profile.title:"多面探索者";
+  $("result-description").textContent=explanation.summary;
+  const image=$("result-animal");
+  setResultArtwork(image,profile,result.type?imageManifest[result.type]:null);
+  const panel=$("result-axes");
   panel.replaceChildren();
-  for (const axis of result.axes) {
-    const row = document.createElement("div");
-    row.className = "score-axis";
-    const heading = document.createElement("div");
-    heading.className = "score-axis-heading";
-    appendText(heading, "span", "", axis.name + " · " + axis.id);
-    appendText(heading, "span", "axis-note", !axis.preference ? "本次选择较均衡" : "本次偏向 " + axis.preference);
-    const titles = document.createElement("div");
-    titles.className = "score-axis-titles";
-    appendText(titles, "span", "", axis.left + " · " + axis.leftName);
-    appendText(titles, "span", "", axis.rightName + " · " + axis.right);
-    const bar = document.createElement("div");
-    bar.className = "score-axis-track";
-    const left = document.createElement("div");
-    left.className = "score-axis-fill";
-    left.style.width = (axis.leftPercent ?? 50) + "%";
-    const right = document.createElement("span");
-    bar.setAttribute("role", "img");
-    bar.setAttribute("aria-label", axis.name + "，左侧 " + (axis.leftPercent ?? 0) +
-      "%，右侧 " + (axis.rightPercent ?? 0) + "%；仅为本题库选项权重分布");
-    bar.append(left, right);
-    const values = document.createElement("div");
-    values.className = "score-axis-labels";
-    appendText(values, "span", "", (axis.leftPercent ?? "—") + "%");
-    appendText(values, "span", "", (axis.rightPercent ?? "—") + "%");
-    row.append(heading, titles, bar, values);
-    panel.appendChild(row);
+  for(const axis of explanation.axes){
+    const row=document.createElement("section");
+    row.className="score-axis";
+    const heading=document.createElement("div");
+    heading.className="score-axis-heading";
+    appendText(heading,"span","",axis.name+" · "+axis.id);
+    appendText(heading,"span","axis-note",axis.preference?"本次偏向 "+axis.preference:"本次加权持平");
+    const selected=document.createElement("div");
+    selected.className="score-axis-labels";
+    appendText(selected,"span","",axis.left+" 选择 "+axis.leftChoices+" 道");
+    appendText(selected,"span","",axis.right+" 选择 "+axis.rightChoices+" 道");
+    const bar=document.createElement("div");
+    bar.className="score-axis-track";
+    bar.setAttribute("role","img");
+    bar.setAttribute("aria-label",axis.name+"："+axis.left+"选择"+axis.leftChoices+"道；"+axis.right+"选择"+axis.rightChoices+"道");
+    const fill=document.createElement("div");
+    fill.className="score-axis-fill";
+    fill.style.width=(axis.leftChoices/axis.evidence.length*100)+"%";
+    bar.append(fill,document.createElement("span"));
+    const interpretation=appendText(row,"p","axis-explanation",axis.narrative);
+    const details=document.createElement("details");
+    details.className="evidence-details";
+    appendText(details,"summary","","查看这组维度的 "+axis.evidence.length+" 条作答依据");
+    const evidenceList=document.createElement("ol");
+    for(const evidence of axis.evidence){
+      const li=document.createElement("li");
+      appendText(li,"strong","",evidence.title);
+      appendText(li,"span","","所选："+evidence.selected);
+      evidenceList.append(li);
+    }
+    details.append(evidenceList);
+    row.prepend(heading,selected,bar);
+    row.append(details);
+    panel.append(row);
+  }
+  const limitations=$("result-limitations");
+  if(limitations){
+    limitations.replaceChildren();
+    for(const item of explanation.limitations)appendText(limitations,"li","",item);
   }
 }
 
@@ -359,10 +379,15 @@ function init() {
   });
   document.addEventListener("keydown", (event) => {
     if (state.screen !== "quiz" || event.altKey || event.ctrlKey || event.metaKey ||
-      event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+      event.isComposing || event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement ||
+      event.target?.isContentEditable) return;
     if (/^[1-4]$/.test(event.key)) {
       const option = questions[state.index].options[Number(event.key) - 1];
-      if (option) chooseOption(option.id);
+      if (option) {
+        chooseOption(option.id);
+        $("quiz-options").querySelectorAll("input[type=radio]")[Number(event.key)-1]?.focus();
+      }
     }
   });
   setScreen("home", false);

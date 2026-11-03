@@ -1,4 +1,4 @@
-name: V2.1 quality gates
+name: V2.2 quality gates
 on:
   push:
     branches: [main, develop]
@@ -21,6 +21,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm run lint
       - run: npm test
+      - run: npm run build && npm run verify:site
   browser-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20

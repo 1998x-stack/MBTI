@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "type",
+      "title",
+      "description",
+      "emoji",
+      "traits",
+      "animal",
+      "image"
+    ],
+    "properties": {
+      "type": {
+        "type": "string",
+        "pattern": "^[EI][SN][TF][JP]$"
+      },
+      "title": {
+        "type": "string",
+        "minLength": 2
+      },
+      "description": {
+        "type": "string",
+        "minLength": 8
+      },
+      "emoji": {
+        "type": "string",
+        "minLength": 1
+      },
+      "traits": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "animal": {
+        "type": "string",
+        "minLength": 1
+      },
+      "image": {
+        "type": "string",
+        "pattern": "^\\./assets/images/[a-z0-9-]+\\.png$"
+      }
+    }
+  }
+}

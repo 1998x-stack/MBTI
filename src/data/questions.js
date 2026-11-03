@@ -1,5 +1,6 @@
-// Canonical short-form question bank. Not a validated psychological instrument.
+// GENERATED FILE: run npm run build:data; edit data/question-bank.zh-CN.json instead.
 export const QUESTION_BANK_VERSION = "2.1.0";
+export const SCORING_VERSION = "2.1.0";
 export const questions = [
   {
     "id": "q01",
