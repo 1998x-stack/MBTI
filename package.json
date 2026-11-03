@@ -1,16 +1,22 @@
 {
   "name": "personaquest",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "description": "Accessible, privacy-first personality exploration prototype",
   "scripts": {
     "test": "node --test tests/unit/*.test.js",
     "test:e2e": "playwright test",
-    "lint": "node --check src/app.js && node --check src/core/assessment.js && node --check src/data/questions.js && node --check src/data/profiles.js",
-    "check": "npm run lint && npm test && npm run test:e2e"
+    "lint": "node --check src/app.js && node --check src/core/assessment.js && node --check src/core/explanation.js && node --check src/core/migration.js && node --check src/data/questions.js && node --check src/data/profiles.js && node --check scripts/validate-data.mjs && node --check scripts/build-data.mjs",
+    "check": "npm run lint && npm test && npm run test:e2e",
+    "validate:data": "node scripts/validate-data.mjs",
+    "build:data": "node scripts/build-data.mjs",
+    "check:data": "node scripts/validate-data.mjs && node scripts/build-data.mjs --check"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.0"
+    "@playwright/test": "^1.56.0",
+    "ajv": "^8.17.1",
+    "sharp": "^0.34.4",
+    "@axe-core/playwright": "^4.10.2"
   }
 }
