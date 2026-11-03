@@ -64,9 +64,19 @@ test("theme is persistent and page never overflows horizontally on mobile", asyn
   const selected = await page.locator("html").getAttribute("data-theme");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", selected);
-  const overflow = await page.evaluate(() =>
-    document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
-  expect(overflow).toBe(false);
+  const metrics = await page.evaluate(() => {
+    const width = document.documentElement.clientWidth;
+    const nodes = Array.from(document.querySelectorAll("*"))
+      .filter(el => getComputedStyle(el).display !== "none")
+      .map(el => { const r = el.getBoundingClientRect(); return {
+        selector: el.id ? "#" + el.id : el.tagName.toLowerCase() + "." + String(el.className).slice(0,50),
+        left: Math.round(r.left), right: Math.round(r.right), width: Math.round(r.width)
+      };})
+      .filter(x => x.left < -2 || x.right > width + 2)
+      .slice(0,12);
+    return { viewport: width, documentWidth: document.documentElement.scrollWidth, nodes };
+  });
+  expect(metrics.documentWidth, JSON.stringify(metrics)).toBeLessThanOrEqual(metrics.viewport + 1);
 });
 
 test("no uncaught page errors on start, quiz and gallery", async ({ page }) => {
