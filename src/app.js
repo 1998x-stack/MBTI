@@ -1,6 +1,8 @@
 import { questions, QUESTION_BANK_VERSION } from "./data/questions.js";
 import { profiles } from "./data/profiles.js";
 import { explainAssessment } from "./core/explanation.js";
+import { setResultArtwork } from "./ui/image-loader.js";
+import { imageManifest } from "./data/image-manifest.js";
 import { AXES, evaluateAnswers, safeRestoreAnswers, validateQuestionBank } from "./core/assessment.js";
 
 const STORAGE_KEY = "personaquest:progress:" + QUESTION_BANK_VERSION;
@@ -238,8 +240,7 @@ function renderResults() {
   $("result-title").textContent=profile?profile.title:"多面探索者";
   $("result-description").textContent=explanation.summary;
   const image=$("result-animal");
-  image.src=profile?profile.image:"./assets/images/all-animals_resized.png";
-  image.alt=profile?profile.animal+"趣味人格角色插画":"多种人格角色插画合照";
+  setResultArtwork(image,profile,result.type?imageManifest[result.type]:null);
   const panel=$("result-axes");
   panel.replaceChildren();
   for(const axis of explanation.axes){
