@@ -7,11 +7,14 @@
   "scripts": {
     "test": "node --test tests/unit/*.test.js",
     "test:e2e": "playwright test",
-    "lint": "node --check src/app.js && node --check src/core/assessment.js && node --check src/core/explanation.js && node --check src/core/migration.js && node --check src/data/questions.js && node --check src/data/profiles.js && node --check scripts/validate-data.mjs && node --check scripts/build-data.mjs",
-    "check": "npm run lint && npm test && npm run test:e2e",
+    "lint": "node --check src/app.js && node --check src/core/assessment.js && node --check src/core/explanation.js && node --check src/core/migration.js && node --check src/data/questions.js && node --check src/data/profiles.js && node --check scripts/validate-data.mjs && node --check scripts/build-data.mjs && node --check src/ui/image-loader.js && node --check scripts/build-site.mjs && node --check scripts/verify-site.mjs",
+    "check": "npm run lint && npm test && npm run build && npm run verify:site && npm run test:e2e",
     "validate:data": "node scripts/validate-data.mjs",
     "build:data": "node scripts/build-data.mjs",
-    "check:data": "node scripts/validate-data.mjs && node scripts/build-data.mjs --check"
+    "check:data": "node scripts/validate-data.mjs && node scripts/build-data.mjs --check",
+    "build:site": "node scripts/build-site.mjs",
+    "build": "npm run check:data && npm run build:site",
+    "verify:site": "node scripts/verify-site.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
