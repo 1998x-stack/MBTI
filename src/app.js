@@ -1,9 +1,10 @@
 import { questions, QUESTION_BANK_VERSION } from "./data/questions.js";
 import { profiles } from "./data/profiles.js";
 import { explainAssessment } from "./core/explanation.js";
-import { setResultArtwork } from "./ui/image-loader.js";
+import { setResultArtwork, handleArtworkFailure } from "./ui/image-loader.js";
+import { migrateProgress } from "./core/migration.js";
 import { imageManifest } from "./data/image-manifest.js";
-import { AXES, evaluateAnswers, safeRestoreAnswers, validateQuestionBank } from "./core/assessment.js";
+import { AXES, evaluateAnswers, validateQuestionBank } from "./core/assessment.js";
 
 const STORAGE_KEY = "personaquest:progress:" + QUESTION_BANK_VERSION;
 const THEME_KEY = "personaquest:theme";
@@ -24,11 +25,12 @@ validateQuestionBank(questions);
 function restoreProgress() {
   try {
     const payload = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-    if (!payload || payload.version !== QUESTION_BANK_VERSION) return;
-    state.answers = safeRestoreAnswers(questions, payload.answers);
-    const index = Number(payload.index);
-    state.index = Number.isInteger(index) ? Math.max(0, Math.min(questions.length - 1, index)) : 0;
-    state.finished = payload.finished === true && evaluateAnswers(questions, state.answers).completed;
+    if (!payload) return;
+    const restored = migrateProgress(questions, payload, payload.version, QUESTION_BANK_VERSION);
+    if (!["compatible", "partial"].includes(restored.status)) return;
+    state.answers = Object.assign(Object.create(null), restored.answers);
+    state.index = restored.index;
+    state.finished = restored.finished && evaluateAnswers(questions, state.answers).completed;
   } catch {
     // Storage can be blocked or contain damaged data. The quiz must remain usable.
   }
@@ -374,8 +376,8 @@ function init() {
   $("share-button").addEventListener("click", shareResult);
   $("clear-data").addEventListener("click", clearData);
   $("result-animal").addEventListener("error", () => {
-    const image = $("result-animal");
-    if (!image.src.endsWith("/all-animals_resized.png")) image.src = "./assets/images/all-animals_resized.png";
+    // <picture> sources take priority over <img src>; changing only src cannot recover.
+    handleArtworkFailure($("result-animal"));
   });
   document.addEventListener("keydown", (event) => {
     if (state.screen !== "quiz" || event.altKey || event.ctrlKey || event.metaKey ||

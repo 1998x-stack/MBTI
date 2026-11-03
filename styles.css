@@ -345,3 +345,9 @@ fieldset.quiz-options { border:0; padding:0; margin:0; min-width:0; }
 /* Header remains readable when sticky over translucent result-area layers. */
 :root:not([data-theme="dark"]) .brand-copy small {color:#303746;}
 :root[data-theme="dark"] .brand-copy small {color:#eee8fc;}
+
+/* Release hardening: consistent focus visibility below the sticky header. */
+html { scroll-padding-top: 96px; }
+.screen h1[tabindex="-1"], .evidence-details, .option-card { scroll-margin-top: 96px; }
+:root:not([data-theme="dark"]) .brand-copy small { color: #303746; }
+:root[data-theme="dark"] .brand-copy small { color: #eee8fc; }
