@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async({page})=>{await page.goto("/");await page.evaluate(()=>localStorage.clear());await page.reload()});
 const check=async(page,label)=>{
  const results=await new AxeBuilder({page}).withTags(["wcag2a","wcag2aa","wcag21aa","wcag22aa"]).analyze();
- expect(results.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>n.target)})),label).toEqual([]);
+ expect(results.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary,data:n.any?.[0]?.data}))})),label).toEqual([]);
 };
 test("home, questionnaire and gallery have no automatic WCAG A/AA violations",async({page})=>{
  await check(page,"home");

@@ -324,3 +324,17 @@ fieldset.quiz-options { border:0; padding:0; margin:0; min-width:0; }
  .option-card:focus-within { outline: 3px solid Highlight; }
  .progress-fill,.score-axis-fill { background: Highlight; }
 }
+
+/* WCAG AA: remove low-contrast decorative alpha text and strengthen captions. */
+:root:not([data-theme="dark"]) .eyebrow,
+:root:not([data-theme="dark"]) .section-kicker,
+:root:not([data-theme="dark"]) .question-eyebrow { color:#5037a7; }
+:root:not([data-theme="dark"]) .hero-trust,
+:root:not([data-theme="dark"]) .hero-trust > span { color:#343b4b; }
+:root[data-theme="dark"] .eyebrow,
+:root[data-theme="dark"] .section-kicker,
+:root[data-theme="dark"] .question-eyebrow { color:#dccdff; }
+:root[data-theme="dark"] .hero-trust,
+:root[data-theme="dark"] .hero-trust > span { color:#f0ebff; }
+.dimension-card small { color:#302d3b; opacity:1; }
+.dimension-code { color:#4a4658; }

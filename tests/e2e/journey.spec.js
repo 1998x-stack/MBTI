@@ -18,7 +18,7 @@ test("12 questions complete, scoring shows ESTJ and human-readable axis explanat
   await expect(page.locator("#result-title")).not.toBeEmpty();
   await expect(page.locator("#result-axes .score-axis")).toHaveCount(4);
   await expect(page.locator("#result-axes")).not.toContainText("NaN");
-  await expect(page.locator("#result-animal")).toHaveAttribute("src", /estj-bee\.png$/);
+  await expect(page.locator("#result-animal")).toHaveAttribute("src", /estj-bee-640\.webp$/);
 });
 
 test("rapid double click on next never skips the following unanswered question", async ({ page }) => {
