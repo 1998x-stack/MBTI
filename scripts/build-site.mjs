@@ -1,4 +1,5 @@
 import { rm, mkdir, copyFile, cp, writeFile, readFile, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { resolve,dirname,basename,join } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -16,7 +17,7 @@ for(const file of ["index.html","styles.css"]){
 await copyFile(resolve(root,"assets/images/all-animals_resized.png"),resolve(dist,"assets/images/all-animals_resized.png"));
 await writeFile(resolve(dist,".nojekyll"),"");
 const manifest={};
-const report={generatedAt:new Date().toISOString(),profiles:[],totals:{webpBytes:0,avifBytes:0},budgets:{webp640Bytes:256000,avif640Bytes:200000}};
+const report={schemaVersion:"1.0.0",profiles:[],totals:{webpBytes:0,avifBytes:0},budgets:{webp640Bytes:256000,avif640Bytes:200000}};
 const sizes=[320,640];
 for(const [type,p] of Object.entries(profiles)){
  const name=basename(p.image,".png");
@@ -34,7 +35,8 @@ for(const [type,p] of Object.entries(profiles)){
    const relative="./assets/optimized/"+filename;
    srcsets[format].push(relative+" "+width+"w");
    report.totals[format+"Bytes"]+=bytes;
-   stats.variants.push({format,width,bytes,path:relative});
+   const sha256=createHash("sha256").update(await readFile(output)).digest("hex");
+   stats.variants.push({format,width,bytes,path:relative,sha256});
    if(width===640&&bytes>report.budgets[format+"640Bytes"])
     throw new Error("Image budget exceeded: "+type+" "+format+" "+bytes);
   }
