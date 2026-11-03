@@ -21,9 +21,9 @@ jobs:
           node-version: '22'
       - name: Check Pages setup before publishing
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if ! gh api "repos/\${GITHUB_REPOSITORY}/pages" --jq '.build_type' > /tmp/personaquest-pages-type 2>/tmp/personaquest-pages-error; then
+          if ! gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type' > /tmp/personaquest-pages-type 2>/tmp/personaquest-pages-error; then
             echo "::error title=GitHub Pages setup required::Open Settings > Pages > Build and deployment, choose GitHub Actions, and rerun this workflow. Do not add secrets or change repository visibility."
             cat /tmp/personaquest-pages-error
             exit 1
@@ -45,9 +45,9 @@ jobs:
     timeout-minutes: 10
     environment:
       name: github-pages
-      url: \${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     outputs:
-      page_url: \${{ steps.deployment.outputs.page_url }}
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
@@ -62,5 +62,5 @@ jobs:
           node-version: '22'
       - name: Verify published HTML, JS, CSS and images
         env:
-          PAGES_URL: \${{ needs.deploy.outputs.page_url }}
+          PAGES_URL: ${{ needs.deploy.outputs.page_url }}
         run: node scripts/smoke-pages.mjs "$PAGES_URL"
