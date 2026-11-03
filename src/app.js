@@ -1,5 +1,6 @@
 import { questions, QUESTION_BANK_VERSION } from "./data/questions.js";
 import { profiles } from "./data/profiles.js";
+import { explainAssessment } from "./core/explanation.js";
 import { AXES, evaluateAnswers, safeRestoreAnswers, validateQuestionBank } from "./core/assessment.js";
 
 const STORAGE_KEY = "personaquest:progress:" + QUESTION_BANK_VERSION;
@@ -225,43 +226,55 @@ function appendText(parent, tag, className, text) {
 function renderResults() {
   const result = evaluateAnswers(questions, state.answers);
   if (!result.completed) return;
-  const profile = result.type ? profiles[result.type] : null;
-  $("result-code").textContent = result.type || "MIXED";
-  $("result-title").textContent = profile ? profile.title : "多面探索者";
-  $("result-description").textContent = profile ? profile.description :
-    "你在至少一组偏好上呈现出均衡的选择，因此我们不强行将你归入某一个四字母组合。这样的结果同样值得探索。";
-  const image = $("result-animal");
-  image.src = profile ? profile.image : "./assets/images/all-animals_resized.png";
-  image.alt = profile ? profile.animal + "人格插画" : "十六种人格动物合照";
-  const panel = $("result-axes");
+  const explanation=explainAssessment(questions,state.answers,result);
+  const profile=result.type?profiles[result.type]:null;
+  $("result-code").textContent=result.type||"MIXED";
+  $("result-title").textContent=profile?profile.title:"多面探索者";
+  $("result-description").textContent=explanation.summary;
+  const image=$("result-animal");
+  image.src=profile?profile.image:"./assets/images/all-animals_resized.png";
+  image.alt=profile?profile.animal+"趣味人格角色插画":"多种人格角色插画合照";
+  const panel=$("result-axes");
   panel.replaceChildren();
-  for (const axis of result.axes) {
-    const row = document.createElement("div");
-    row.className = "score-axis";
-    const heading = document.createElement("div");
-    heading.className = "score-axis-heading";
-    appendText(heading, "span", "", axis.name + " · " + axis.id);
-    appendText(heading, "span", "axis-note", !axis.preference ? "本次选择较均衡" : "本次偏向 " + axis.preference);
-    const titles = document.createElement("div");
-    titles.className = "score-axis-titles";
-    appendText(titles, "span", "", axis.left + " · " + axis.leftName);
-    appendText(titles, "span", "", axis.rightName + " · " + axis.right);
-    const bar = document.createElement("div");
-    bar.className = "score-axis-track";
-    const left = document.createElement("div");
-    left.className = "score-axis-fill";
-    left.style.width = (axis.leftPercent ?? 50) + "%";
-    const right = document.createElement("span");
-    bar.setAttribute("role", "img");
-    bar.setAttribute("aria-label", axis.name + "，左侧 " + (axis.leftPercent ?? 0) +
-      "%，右侧 " + (axis.rightPercent ?? 0) + "%；仅为本题库选项权重分布");
-    bar.append(left, right);
-    const values = document.createElement("div");
-    values.className = "score-axis-labels";
-    appendText(values, "span", "", (axis.leftPercent ?? "—") + "%");
-    appendText(values, "span", "", (axis.rightPercent ?? "—") + "%");
-    row.append(heading, titles, bar, values);
-    panel.appendChild(row);
+  for(const axis of explanation.axes){
+    const row=document.createElement("section");
+    row.className="score-axis";
+    const heading=document.createElement("div");
+    heading.className="score-axis-heading";
+    appendText(heading,"span","",axis.name+" · "+axis.id);
+    appendText(heading,"span","axis-note",axis.preference?"本次偏向 "+axis.preference:"本次加权持平");
+    const selected=document.createElement("div");
+    selected.className="score-axis-labels";
+    appendText(selected,"span","",axis.left+" 选择 "+axis.leftChoices+" 道");
+    appendText(selected,"span","",axis.right+" 选择 "+axis.rightChoices+" 道");
+    const bar=document.createElement("div");
+    bar.className="score-axis-track";
+    bar.setAttribute("role","img");
+    bar.setAttribute("aria-label",axis.name+"："+axis.left+"选择"+axis.leftChoices+"道；"+axis.right+"选择"+axis.rightChoices+"道");
+    const fill=document.createElement("div");
+    fill.className="score-axis-fill";
+    fill.style.width=(axis.leftChoices/axis.evidence.length*100)+"%";
+    bar.append(fill,document.createElement("span"));
+    const interpretation=appendText(row,"p","axis-explanation",axis.narrative);
+    const details=document.createElement("details");
+    details.className="evidence-details";
+    appendText(details,"summary","","查看这组维度的 "+axis.evidence.length+" 条作答依据");
+    const evidenceList=document.createElement("ol");
+    for(const evidence of axis.evidence){
+      const li=document.createElement("li");
+      appendText(li,"strong","",evidence.title);
+      appendText(li,"span","","所选："+evidence.selected);
+      evidenceList.append(li);
+    }
+    details.append(evidenceList);
+    row.prepend(heading,selected,bar);
+    row.append(details);
+    panel.append(row);
+  }
+  const limitations=$("result-limitations");
+  if(limitations){
+    limitations.replaceChildren();
+    for(const item of explanation.limitations)appendText(limitations,"li","",item);
   }
 }
 

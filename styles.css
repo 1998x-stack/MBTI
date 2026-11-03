@@ -298,3 +298,16 @@ kbd { font:inherit; display:inline-grid; place-items:center; min-width:20px; hei
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
 }
+
+
+/* V2.2: explanation and source evidence disclosure */
+.axis-explanation { margin: 10px 0 8px; font-size: 13px; line-height: 1.75; color: var(--ink-soft); }
+.evidence-details { margin-top: 12px; border: 1px solid var(--line); padding: 12px 16px; border-radius: 13px; }
+.evidence-details summary { cursor: pointer; color: var(--violet); font-weight: 740; font-size: 13px; }
+.evidence-details summary:focus-visible { outline: 3px solid var(--violet); outline-offset: 4px; }
+.evidence-details ol { margin: 16px 0 2px; padding-left: 21px; }
+.evidence-details li { padding: 6px 0 9px; line-height: 1.8; font-size: 12px; color: var(--ink-soft); }
+.evidence-details li strong { display: block; color: var(--ink); font-size: 13px; }
+.evidence-details li span { display: block; }
+.result-limitation-title { margin: 32px 0 9px; font-size: 16px; }
+.result-limitations { padding-left: 20px; margin: 0; color: var(--ink-soft); font-size: 13px; line-height: 1.9; }
