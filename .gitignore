@@ -1,0 +1,12 @@
+# Node and browser test artifacts
+node_modules/
+playwright-report/
+test-results/
+coverage/
+.nyc_output/
+# Local files
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
