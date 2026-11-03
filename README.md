@@ -1,88 +1,81 @@
-# PersonaQuest · MBTI 趣味人格探索 V2.1
+# PersonaQuest · 情境人格探索 V2.2
 
-> 12 道生活情境题、4 组偏好维度、16 种动物人格插画。一个**静态部署、隐私优先、可验证**的轻量级自我探索 Web 应用。
+一个 12 道生活情境题、4 个选择维度、16 种趣味人格画像的静态 Web 应用。题库为本项目创作的探索性内容，**不是经心理测量学验证的官方 MBTI 测试**；结果仅用于娱乐和自我反思。
 
-**当前稳定主线：`main`（V2.1）**。从 V2 的情境测试与 V1 的动物插画重构而来。老版代码保存在独立的 `v1`、`v2` 历史快照分支，不会因升级而丢失。
-
-## 运行方式
-
-项目无需数据库、API Key 或后端服务。浏览器需要通过 HTTP 访问（ES Module 不建议直接使用 `file://`）。
-
-```bash
-git clone https://github.com/1998x-stack/MBTI.git
-cd MBTI
-git switch main
-python3 -m http.server 4173 --bind 127.0.0.1
-```
-
-打开 http://127.0.0.1:4173 。
-
-## V2.1 功能
-
-- **全新响应式 UI**：独立首页、情境问答页、结果页和 16 型人格图鉴；支持深色主题、桌面/移动端布局与减少动画偏好。
-- **12 道结构化问题**：EI、SN、TF、JP 四个维度分别配置 3 道题，统一通过单一题库模块管理，不再依赖截断的旧版 `question.js`。
-- **纯函数评分**：每次依据答案 ID 重新计算，不使用累加型 UI 状态；平局不会自动被强制归类。
-- **可靠交互**：每题选择后点击下一题；禁止跳过未作答的问题，可返回修改；键盘 1–4 可选项。
-- **本地进度**：使用带题库版本号的 localStorage 保存答案，允许恢复和清除，不默认把作答内容上传服务器。
-- **结果视觉**：按需加载对应的动物插画，并用四轴相对得分图解释本次答案。
-- **安全降级**：DOM 使用 textContent，限制 CSP；原生分享不可用时尝试复制结果代号和摘要。
-
-## 工程结构
-
-```text
-index.html                   # 四屏静态语义骨架
-styles.css                   # UI 设计令牌、布局、主题与响应式
-src/
-  app.js                     # 浏览器状态和交互事件
-  core/assessment.js         # 独立评分器、验证、平局处理
-  data/questions.js          # 12 题唯一题库源
-  data/profiles.js           # 16 型画像与动物资源映射
-assets/images/               # 16 张按需加载的动物图 + 1 张首页合照
-tests/unit/assessment.test.js
-tests/e2e/journey.spec.js
-playwright.config.js
-.github/workflows/ci.yml
-docs/
-  V2_1_DESIGN.md
-  REPOSITORY_AUDIT.md
-  ROADMAP.md
-```
-
-## 本地质量验收
-
-推荐 Node.js 22+。安装的 Playwright 仅用于自动化测试，页面本身不依赖 Node 运行时。
+## 使用与本地预览
 
 ```bash
 npm install
+npm run build
+python3 -m http.server 4173 --directory dist --bind 127.0.0.1
+```
+
+打开 http://127.0.0.1:4173/ 。无需后端、注册、API Key 或数据库。源文件也可直接通过本地 HTTP 服务器预览，但正式发布及端到端测试均使用 `dist/` 优化构建。
+
+## GitHub Pages 部署
+
+`.github/workflows/pages.yml` 在 **main 推送**或手动触发时执行校验、生成 `dist/`，通过 `upload-pages-artifact` + `deploy-pages` 发布。请在仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**，并检查仓库所属账号的 Pages 资格。此仓库当前为 **Private**，启用 Pages 并不等同于让页面私有；一般情况下 Pages 站点可被公开访问。不要上传私人答题数据或敏感资料到仓库。
+
+发布成功后，项目站点通常使用 `https://1998x-stack.github.io/MBTI/`；以实际 Pages 部署返回的 URL 为准。应用所有脚本、样式、图片均使用相对路径，兼容 `/MBTI/` 子路径。
+
+详见 [Pages 部署与排障](docs/GITHUB_PAGES.md)。
+
+## 核心能力
+
+- **规范题库**：`data/question-bank.zh-CN.json` 为唯一内容源；Draft 2020-12 JSON Schema、跨对象语义校验、版本隔离、来源与内容审查状态。
+- **可解释结果**：确定性评分 + 证据链，每个维度可展开查看三道题与个人选择；不把计分比例冒充人格概率。
+- **无障碍交互**：原生 Radio 选项、键盘操作、正确的答题进度、焦点导航、对比度与自动化 axe 测试。
+- **静态图片优化**：发布时从 PNG 源文件构建 AVIF / WebP 的 320px、640px 变体；结果页用 `picture` 按需加载，保留轻量首页合照。
+- **本地隐私**：答案保存在用户浏览器 localStorage，不上传服务器；页面提供手动清除。分享文案不含逐题答案。
+
+## 目录
+
+```text
+index.html, styles.css
+data/question-bank.zh-CN.json        # 题库唯一内容源
+schemas/                              # 数据校验契约
+src/core/assessment.js               # 纯函数评分
+src/core/explanation.js              # 可复核的解释与证据
+src/core/migration.js                # 显式版本兼容迁移
+src/data/questions.js                # 生成的浏览器 ESM
+src/data/profiles.js                 # 16 种趣味画像
+src/data/image-manifest.js           # 本地预览占位；构建时生成优化资源映射
+src/ui/image-loader.js               # 响应式结果图片
+scripts/validate-data.mjs            # 结构 + 语义校验
+scripts/build-data.mjs               # 从 JSON 生成题库 ESM
+scripts/build-site.mjs               # 构建 dist/、AVIF/WebP
+scripts/verify-site.mjs              # 发布资源完整性与体积预算
+tests/unit/, tests/e2e/              # Node & Playwright + axe
+.github/workflows/ci.yml             # 单元、构建、浏览器 CI
+.github/workflows/pages.yml          # Pages 构建与发布
+```
+
+## 开发质量检查
+
+```bash
+npm install
+npm run validate:data
+npm run build:data
+npm run check:data
 npm run lint
 npm test
+npm run build
+npm run verify:site
 npx playwright install chromium
 npm run test:e2e
 ```
 
-- Node 原生测试验证题库、16 种人格可达、输入异常、重复重算、平局以及图片引用。
-- Playwright 在 Chromium 桌面和 Pixel 7 模拟设备上验证完整答题、快速连点、回退修改、断点恢复、图鉴、主题与溢出。
-- [V2.1 通过的 GitHub Actions 验证（14/14 浏览器用例）](https://github.com/1998x-stack/MBTI/actions/runs/41564685001)。
-- [V2.1 合并 PR #1](https://github.com/1998x-stack/MBTI/pull/1)。
-- [main 合并后的 GitHub Actions 验证](https://github.com/1998x-stack/MBTI/actions/runs/41564949915)（unit 与浏览器 E2E 均通过）。
+CI 的浏览器测试从 `dist/` 启动真实静态网站，分别执行桌面和移动设备模拟。某些无障碍问题需要 NVDA、VoiceOver、TalkBack 等真实辅助技术人工复核，自动化通过并不等于全面 WCAG 2.2 AA 认证。
 
-## 分支与版本
+## 版本分支
 
-| 分支 | 用途 |
-| --- | --- |
-| [main](https://github.com/1998x-stack/MBTI/tree/main) | V2.1 主线，GitHub PR 合并后部署 |
-| [develop](https://github.com/1998x-stack/MBTI/tree/develop) | 后续版本的集成开发基线 |
-| [v1](https://github.com/1998x-stack/MBTI/tree/v1) | Personality Zoo 历史快照（保持原实现） |
-| [v2](https://github.com/1998x-stack/MBTI/tree/v2) | PersonaQuest 历史快照（原文件包括不完整的题库草稿） |
-| [v2.1](https://github.com/1998x-stack/MBTI/tree/v2.1) | V2.1 已验收版本快照（保持稳定） |
-| [backup/pre-version-split-2026-11-03](https://github.com/1998x-stack/MBTI/tree/backup/pre-version-split-2026-11-03) | 版本拆分前的完整备份 |
+- `main`：稳定主线，经 PR + CI 后发布 Pages。
+- `develop`：下一阶段开发基线。
+- `v1`、`v2`、`v2.1`：保留对应历史版本的独立分支快照。
+- `feat/v2.2-pages-schema-explanations-a11y-images`：V2.2 开发工作分支；仅验收完成后建立 `v2.2` 稳定版本分支。
 
-详见 [V2.1 设计与数据契约](docs/V2_1_DESIGN.md)、[仓库审计](docs/REPOSITORY_AUDIT.md) 和 [下一阶段路线图](docs/ROADMAP.md)。
+## 进一步阅读
 
-## 重要说明
+[架构与验收](docs/V2_2_ARCHITECTURE.md) · [Pages 指南](docs/GITHUB_PAGES.md) · [评分与解释规则](docs/SCORING_EXPLANATION.md) · [无障碍检查清单](docs/ACCESSIBILITY_CHECKLIST.md) · [历史版本审计](docs/REPOSITORY_AUDIT.md)。
 
-**本项目不是官方 MBTI 测评工具，也不是心理诊断工具。** 12 道题的权重和问卷设计尚未经心理测量学效度/信度研究。所有结果、四轴百分比及动物角色只适合娱乐性自我探索，不应当被用于医疗、招聘、职业能力判断或其他高风险决策。若未来引入正式量表，需先解决版权授权、施测规范与验证数据。
-
-## V2.2 计划
-
-规范题库 Schema 与版本迁移、提升屏幕阅读器交互与可访问性验证、压缩图片与性能基线、完善 CI 安全/可访问性检测，之后再考虑新的产品功能。
+**使用限制**：本问卷不适合临床诊断、心理咨询评估、能力判断、职业筛选等重要决策。原始插画版权、题库内容许可仍应由仓库维护者确认；待确认内容不得暗示已完成授权或测量学验证。
