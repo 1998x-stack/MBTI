@@ -341,3 +341,7 @@ fieldset.quiz-options { border:0; padding:0; margin:0; min-width:0; }
 
 /* Keep themed banner eyebrow legible against its dark solid panel. */
 .result-banner .light-eyebrow {color:#e5d9ff !important;}
+
+/* Header remains readable when sticky over translucent result-area layers. */
+:root:not([data-theme="dark"]) .brand-copy small {color:#303746;}
+:root[data-theme="dark"] .brand-copy small {color:#eee8fc;}
