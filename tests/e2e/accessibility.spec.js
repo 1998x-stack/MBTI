@@ -33,3 +33,24 @@ test("screen navigation restores a focusable heading",async({page})=>{
  await page.getByRole("button",{name:"人格图鉴"}).click();
  await expect(page.locator("#types-heading")).toBeFocused();
 });
+
+
+test("result explanation remains accessible and source evidence is inspectable",async({page})=>{
+ await page.locator("#start-button").click();
+ for(let i=0;i<12;i++){
+  await page.locator("#quiz-options .option-card").first().click();
+  await page.locator("#next-question").click();
+ }
+ await expect(page.locator("#result-axes .evidence-details")).toHaveCount(4);
+ await page.locator("#result-axes .evidence-details").first().locator("summary").click();
+ await expect(page.locator("#result-axes .evidence-details").first().locator("li")).toHaveCount(3);
+ await check(page,"result");
+});
+test("320px reflow keeps essential quiz controls usable",async({page})=>{
+ await page.setViewportSize({width:320,height:760});
+ await page.locator("#start-button").click();
+ await expect(page.getByRole("radio")).toHaveCount(4);
+ await expect(page.locator("#next-question")).toBeVisible();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth))
+  .toBeLessThanOrEqual(321);
+});
