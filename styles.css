@@ -7,7 +7,7 @@
   --ink-soft: #586071;
   --muted: #646b79;
   --line: #e7e7ec;
-  --violet: #7255d7;
+  --violet: #573bb1;
   --violet-dark: #5037a7;
   --violet-soft: #f3efff;
   --mint: #e3f4e9;
@@ -227,7 +227,7 @@ kbd { font:inherit; display:inline-grid; place-items:center; min-width:20px; hei
 .site-footer p { font-size:12px; margin:0; }
 .footer-link { border:0; background:transparent; text-decoration:underline; text-underline-offset:3px; color:var(--muted); font-size:12px; }
 .toast { position:fixed; bottom:26px; left:50%; transform:translateX(-50%); background:#2b2d3a; color:white; border-radius:12px; padding:12px 20px; box-shadow:0 12px 35px #0003; z-index:40; font-size:13px; max-width:calc(100% - 32px); text-align:center; }
-@keyframes appear { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes appear { from { transform:translateY(4px); } to { transform:translateY(0); } }
 @media(max-width:1120px) {
   .hero-wrap { gap:22px; }
   .hero-visual { min-height:470px; }
@@ -338,3 +338,6 @@ fieldset.quiz-options { border:0; padding:0; margin:0; min-width:0; }
 :root[data-theme="dark"] .hero-trust > span { color:#f0ebff; }
 .dimension-card small { color:#302d3b; opacity:1; }
 .dimension-code { color:#4a4658; }
+
+/* Keep themed banner eyebrow legible against its dark solid panel. */
+.result-banner .light-eyebrow {color:#e5d9ff !important;}
