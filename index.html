@@ -1,126 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personality Zoo - 趣味MBTI测试</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#faf9f6">
+  <meta name="description" content="PersonaQuest：用12道生活情境题，轻松探索四组性格偏好。结果只作自我探索，不是心理诊断。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>PersonaQuest · 认识自己的另一种方式</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="preload" as="image" href="./assets/images/all-animals_resized.png">
 </head>
 <body>
-    <!-- 欢迎页面 -->
-    <div id="welcome-screen" class="screen active">
-        <div class="apple-header">
-            <div class="apple-logo">🍎</div>
-            <div class="header-title">Personality Zoo</div>
-        </div>
-        
-        <div class="hero-section">
-            <h1>你是什么人格动物?</h1>
-            <p>通过12个有趣问题发现你的MBTI类型<br>并获得专属动物形象</p>
-            <img src="assets/images/all-animals_resized.png" alt="动物集合" class="hero-image">
-            <button id="start-btn" class="apple-btn">
-                <i class="fa-solid fa-paw"></i> 开始测试
-            </button>
-        </div>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <i class="fa-solid fa-gamepad"></i>
-                <h3>游戏化测试</h3>
-                <p>有趣的场景选择代替枯燥问卷</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-award"></i>
-                <h3>成就徽章</h3>
-                <p>完成挑战解锁独特成就</p>
-            </div>
-            <div class="feature-card">
-                <i class="fa-solid fa-share-nodes"></i>
-                <h3>分享结果</h3>
-                <p>生成专属动物卡片分享好友</p>
-            </div>
-        </div>
-    </div>
+  <a class="skip-link" href="#main-content">跳转到主要内容</a>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="header-inner">
+        <button class="brand" type="button" data-route="home" aria-label="PersonaQuest 首页">
+          <span class="brand-mark" aria-hidden="true"><span>✳</span></span>
+          <span class="brand-copy">persona<span class="brand-accent">quest</span><small>DISCOVER YOUR WAY</small></span>
+        </button>
+        <nav class="top-nav" aria-label="主导航">
+          <button class="nav-link is-active" type="button" data-route="home">首页</button>
+          <button class="nav-link" type="button" data-route="types">人格图鉴</button>
+        </nav>
+        <button id="theme-toggle" class="theme-switch" type="button" aria-label="切换深色模式" title="切换外观">
+          <span id="theme-icon" aria-hidden="true">☾</span><span class="theme-text">外观</span>
+        </button>
+      </div>
+    </header>
 
-    <!-- 测试页面 -->
-    <div id="test-screen" class="screen">
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="question-progress"></div>
+    <main id="main-content" tabindex="-1">
+      <section class="screen screen-home" id="screen-home" aria-labelledby="home-heading">
+        <div class="hero-wrap">
+          <div class="hero-copy">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> THE LITTLE JOURNEY WITHIN</span>
+            <h1 id="home-heading">你是怎样的<span class="headline-highlight">独特组合<span class="headline-spark" aria-hidden="true">✳</span></span>？</h1>
+            <p class="hero-lead">每个人都有自己的观察方式、思考节奏和生活偏好。通过 12 个轻松的日常情境，发现属于你的那份可能性。</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-large" id="start-button" type="button">开始我的探索 <span aria-hidden="true">↗</span></button>
+              <button class="btn btn-ghost btn-large" id="resume-button" type="button" hidden>继续上次的探索 <span id="resume-count"></span></button>
             </div>
-            <div class="progress-text">问题 <span id="current-q">1</span>/12</div>
+            <div class="hero-trust">
+              <div class="mini-avatars" aria-hidden="true"><span>🦊</span><span>🦉</span><span>🐼</span></div>
+              <span>无须注册 · 本地记录 · 随时修改答案</span>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="一幅由不同动物角色组成的趣味人格插画">
+            <div class="hero-visual-orbit orbit-one" aria-hidden="true"></div>
+            <div class="hero-visual-orbit orbit-two" aria-hidden="true"></div>
+            <span class="visual-spark visual-spark-a" aria-hidden="true">✦</span>
+            <span class="visual-spark visual-spark-b" aria-hidden="true">✳</span>
+            <div class="hero-art-card">
+              <div class="art-header"><span class="art-overline">PERSONALITY EXPLORER</span><span aria-hidden="true">✦ ✦ ✦</span></div>
+              <img src="./assets/images/all-animals_resized.png" width="560" height="560" alt="十六种人格的动物角色合照" fetchpriority="high">
+              <div class="art-bottom"><strong>16</strong> 个有趣的人格画像 <span aria-hidden="true">↗</span></div>
+            </div>
+            <div class="float-note note-top"><span class="note-icon">✳</span><span>不设标准答案<br><strong>真实的你就很好</strong></span></div>
+            <div class="float-note note-bottom"><span class="note-icon note-icon-yellow">↗</span><span>12 个小情境<br><strong>4 组思考偏好</strong></span></div>
+          </div>
         </div>
-        
-        <div class="question-container">
-            <h2 id="question-text"></h2>
-            <div id="options-container" class="options-grid"></div>
+        <div class="intro-strip" aria-label="探索特点">
+          <div><span class="strip-icon">✦</span><strong>12</strong><span>道日常情境题</span></div>
+          <span class="strip-divider" aria-hidden="true"></span>
+          <div><span class="strip-icon">◈</span><strong>4</strong><span>组偏好维度</span></div>
+          <span class="strip-divider" aria-hidden="true"></span>
+          <div><span class="strip-icon">✳</span><strong>16</strong><span>种趣味画像</span></div>
         </div>
-        
-        <div class="dimension-bars">
-            <div class="dimension">
-                <span>外向(E)</span>
-                <div class="bar-container">
-                    <div class="bar-fill" id="e-bar"></div>
-                </div>
-                <span>内向(I)</span>
-            </div>
-            <div class="dimension">
-                <span>实感(S)</span>
-                <div class="bar-container">
-                    <div class="bar-fill" id="s-bar"></div>
-                </div>
-                <span>直觉(N)</span>
-            </div>
-            <div class="dimension">
-                <span>思维(T)</span>
-                <div class="bar-container">
-                    <div class="bar-fill" id="t-bar"></div>
-                </div>
-                <span>情感(F)</span>
-            </div>
-            <div class="dimension">
-                <span>判断(J)</span>
-                <div class="bar-container">
-                    <div class="bar-fill" id="j-bar"></div>
-                </div>
-                <span>知觉(P)</span>
-            </div>
-        </div>
-    </div>
+        <section class="section-block" aria-labelledby="axes-heading">
+          <div class="section-heading">
+            <div><span class="section-kicker">A LITTLE MORE ABOUT YOU</span><h2 id="axes-heading">从四个角度，认识更多面向的自己。</h2></div>
+            <p>不是把人装进四个字母，而是给理解自己多一组视角。</p>
+          </div>
+          <div class="dimension-grid">
+            <article class="dimension-card dimension-lavender"><span class="dimension-graphic">↔</span><small>ENERGY</small><h3>能量来源</h3><p>独处思考，或在互动中汲取灵感？</p><span class="dimension-code">E / I</span></article>
+            <article class="dimension-card dimension-mint"><span class="dimension-graphic">◈</span><small>INFORMATION</small><h3>信息偏好</h3><p>眼前的具体事实，或背后的可能性？</p><span class="dimension-code">S / N</span></article>
+            <article class="dimension-card dimension-peach"><span class="dimension-graphic">✧</span><small>DECISION</small><h3>决策视角</h3><p>逻辑推理，或对人的影响与感受？</p><span class="dimension-code">T / F</span></article>
+            <article class="dimension-card dimension-yellow"><span class="dimension-graphic">⌁</span><small>RHYTHM</small><h3>生活节奏</h3><p>有条理的规划，或开放灵活地探索？</p><span class="dimension-code">J / P</span></article>
+          </div>
+        </section>
+        <div class="bottom-callout"><div><span class="callout-symbol" aria-hidden="true">✳</span><strong>准备好开启一场小小的自我探索了吗？</strong></div><button type="button" class="btn btn-dark" id="start-again-button">从第一题开始 <span aria-hidden="true">↗</span></button></div>
+      </section>
 
-    <!-- 结果页面 -->
-    <div id="result-screen" class="screen">
-        <div class="result-header">
-            <h1>你的测试结果!</h1>
-            <p>你是一只<span id="type-title">霸王龙</span></p>
+      <section class="screen screen-quiz" id="screen-quiz" aria-labelledby="quiz-heading" hidden>
+        <div class="quiz-layout">
+          <aside class="quiz-sidebar" aria-labelledby="journey-heading">
+            <button class="text-back" type="button" data-route="home">← 返回首页</button>
+            <div class="journey-header"><span class="section-kicker">YOUR PERSONAL JOURNEY</span><h2 id="journey-heading">每一种选择，<br>都值得被看见。</h2><p>按第一直觉选择。没有对错，也不用迎合任何人的期待。</p></div>
+            <div class="journey-divider"></div>
+            <h3 class="sidebar-subtitle">探索维度 <span>01—04</span></h3>
+            <div id="axis-tracker" class="axis-tracker"></div>
+            <div class="sidebar-note"><span aria-hidden="true">✳</span><p>所有答案只保存在当前浏览器。随时可以返回修改或清除。</p></div>
+          </aside>
+          <div class="quiz-content">
+            <div class="quiz-topbar"><div><span class="section-kicker">SCENE EXPLORATION</span><span id="question-counter" class="question-counter">01 / 12</span></div><span id="quiz-axis-label" class="axis-pill">能量来源</span></div>
+            <div class="progress-track" id="quiz-progress" role="progressbar" aria-label="探索进度" aria-valuemin="0" aria-valuemax="12" aria-valuenow="1"><div id="quiz-progress-fill" class="progress-fill"></div></div>
+            <article class="quiz-card">
+              <div class="question-decoration" aria-hidden="true">✳</div>
+              <span class="question-eyebrow">IMAGINE THIS SITUATION</span>
+              <h1 id="quiz-heading" tabindex="-1">加载问题中...</h1>
+              <p id="quiz-scenario" class="quiz-scenario"></p>
+              <p id="quiz-prompt" class="quiz-prompt"></p>
+              <div id="quiz-options" class="quiz-options" role="group" aria-label="选择最接近自己的选项"></div>
+              <p class="quiz-hint" id="quiz-hint" aria-live="polite">选择最贴近你的那一项。</p>
+            </article>
+            <div class="quiz-toolbar">
+              <button id="previous-question" class="btn btn-previous" type="button">← 上一题</button>
+              <span class="keyboard-hint">小提示：按 <kbd>1</kbd> — <kbd>4</kbd> 快速选择</span>
+              <button id="next-question" class="btn btn-primary btn-next" type="button" disabled>下一题 <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
         </div>
-        
-        <div class="animal-container">
-            <img id="animal-image" src="" alt="人格动物">
-            <div id="type-acronym" class="type-badge">ENTJ</div>
-        </div>
-        
-        <div class="result-description">
-            <p id="type-description"></p>
-        </div>
-        
-        <div class="achievements-container">
-            <h3><i class="fa-solid fa-trophy"></i> 获得的成就</h3>
-            <div id="badges-container" class="badges-grid"></div>
-        </div>
-        
-        <div class="action-buttons">
-            <button id="retry-btn" class="apple-btn secondary">
-                <i class="fa-solid fa-rotate"></i> 重新测试
-            </button>
-            <button id="share-btn" class="apple-btn">
-                <i class="fa-solid fa-share"></i> 分享结果
-            </button>
-        </div>
-    </div>
+      </section>
 
-    <script src="script.js"></script>
-    <script src="lib/confetti.js"></script>
+      <section class="screen screen-results" id="screen-results" aria-labelledby="results-heading" hidden>
+        <div class="result-banner">
+          <div class="result-copy">
+            <span class="eyebrow light-eyebrow"><span class="eyebrow-dot"></span> YOUR LITTLE DISCOVERY</span>
+            <p class="result-pretitle">探索完成，认识新的自己</p>
+            <h1 id="results-heading">你的探索画像</h1>
+            <div class="result-type-line"><strong id="result-code">ENTJ</strong><span id="result-title">独特的你</span></div>
+            <p id="result-description" class="result-description"></p>
+            <div class="result-actions">
+              <button id="share-button" class="btn btn-white" type="button">分享类型代号 <span aria-hidden="true">↗</span></button>
+              <button id="restart-button" class="btn btn-outline-light" type="button">重新探索</button>
+            </div>
+          </div>
+          <div class="result-art"><div class="result-art-circle"></div><img id="result-animal" src="./assets/images/all-animals_resized.png" width="360" height="360" alt="人格动物插画"></div>
+        </div>
+        <div class="result-layout">
+          <article class="result-panel" aria-labelledby="result-axes-title">
+            <div class="result-panel-head"><span class="section-kicker">FOUR PREFERENCE AXES</span><h2 id="result-axes-title">四组偏好的答题分布</h2><p>以下比例只是本问卷所选选项的相对计分，不是人格强度、概率或心理测量置信度。</p></div>
+            <div id="result-axes" class="result-axes"></div>
+          </article>
+          <article class="result-panel result-context">
+            <span class="context-icon" aria-hidden="true">✳</span>
+            <span class="section-kicker">A NOTE TO YOURSELF</span>
+            <h2>你永远不止<br>四个字母。</h2>
+            <p>人格偏好会随情境、时间和经历表现出不同的一面。这个轻量级测试的作用，是为自我观察提供线索，而不是定义你是谁。</p>
+            <div class="context-divider"></div>
+            <strong>下一站：认识更多可能性</strong>
+            <button type="button" data-route="types" class="inline-link">浏览 16 种趣味人格画像 <span aria-hidden="true">↗</span></button>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen screen-types" id="screen-types" aria-labelledby="types-heading" hidden>
+        <div class="library-intro"><span class="eyebrow"><span class="eyebrow-dot"></span> THE PERSONALITY LIBRARY</span><h1 id="types-heading">16 种画像，<br><span class="headline-highlight">无数种可能。</span></h1><p>这些只是帮助理解偏好的趣味角色。你可以在不同情境中呈现不同面向，无须被任何描述限制。</p><button id="library-start" class="btn btn-primary" type="button">探索我的偏好 <span aria-hidden="true">↗</span></button></div>
+        <div id="types-grid" class="types-grid" aria-label="十六种人格画像"></div>
+      </section>
+    </main>
+    <footer class="site-footer"><span><strong>personaquest</strong> / a little journey within</span><p>趣味探索，不用于临床诊断、心理评估或招聘筛选。</p><button id="clear-data" type="button" class="footer-link">清除本地答题记录</button></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="./src/app.js"></script>
 </body>
 </html>

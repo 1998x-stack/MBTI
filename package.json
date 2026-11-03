@@ -1,0 +1,16 @@
+{
+  "name": "personaquest",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Accessible, privacy-first personality exploration prototype",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "playwright test",
+    "lint": "node --check src/app.js && node --check src/core/assessment.js && node --check src/data/questions.js && node --check src/data/profiles.js",
+    "check": "npm run lint && npm test && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}
